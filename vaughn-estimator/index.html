@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaughn Construction Co. — Cost Estimator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#152c35;--powder:#f7f6f2;--moss:#7f7a5f;--bronze:#876a4b;--fog:#949d9d;--slate:#343332;--white:#fff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',sans-serif;background:var(--powder);color:var(--slate);min-height:100vh}
+
+/* ── Typography matching vaughnwtx.com ── */
+/* H1: Montserrat 500, uppercase, 3px letter-spacing */
+/* Display: Cormorant Garamond (Proyale substitute) 400, 3px ls */
+/* Body/UI: Montserrat 400-500 */
+
+.header{background:var(--navy);position:relative}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--bronze),var(--moss),var(--bronze))}
+.header-inner{max-width:1200px;margin:0 auto;padding:28px 40px;display:flex;justify-content:space-between;align-items:center}
+.logo-area{display:flex;align-items:center;gap:20px}
+.logo-img{height:50px;width:auto}
+.header-badge{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--powder);opacity:0.6}
+
+.hero{background:var(--navy);padding:0 0 56px 0}
+.hero-inner{max-width:1200px;margin:0 auto;padding:16px 40px 0}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;letter-spacing:3px;color:var(--powder);text-align:center;margin-bottom:28px;opacity:0.9}
+.hero-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:40px 44px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:24px;align-items:end}
+.input-group label{display:block;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--fog);margin-bottom:10px}
+.input-group input,.input-group select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 18px;color:var(--powder);font-family:'Montserrat',sans-serif;font-size:18px;font-weight:500;letter-spacing:1px;outline:none;transition:border-color .25s}
+.input-group select{font-size:14px;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23949d9d' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.input-group select option{background:var(--navy);color:var(--powder)}
+.input-group input:focus,.input-group select:focus{border-color:var(--bronze)}
+.input-group input::placeholder{color:var(--fog);font-weight:400;font-size:14px}
+.btn-estimate{background:var(--bronze);color:var(--powder);border:none;border-radius:8px;padding:16px 32px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .25s;width:100%}
+.btn-estimate:hover{background:var(--moss);transform:translateY(-1px)}
+
+.results{max-width:1200px;margin:-28px auto 0;padding:0 40px 60px;position:relative;z-index:2;display:none}
+.results.visible{display:block;animation:fadeUp .4s ease}
+.summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.summary-card{background:var(--white);border-radius:12px;padding:24px 28px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.03)}
+.summary-card .label{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--fog);margin-bottom:8px}
+.summary-card .value{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:var(--navy);letter-spacing:1px}
+.summary-card .value.bronze{color:var(--bronze)}
+.summary-card .value.moss{color:var(--moss)}
+.summary-card .sub{font-family:'Montserrat',sans-serif;font-size:10px;color:var(--fog);margin-top:4px;font-weight:400}
+
+.range-section{background:var(--white);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.03);padding:28px 32px;margin-bottom:28px}
+.range-section h2{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--navy);margin-bottom:20px}
+.range-bar-wrap{position:relative;height:36px;background:rgba(21,44,53,.04);border-radius:18px;overflow:hidden;margin-bottom:12px}
+.range-fill{position:absolute;top:0;height:100%;border-radius:18px}
+.range-labels{display:flex;justify-content:space-between;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:500;color:var(--fog)}
+.range-labels .active{color:var(--navy);font-weight:700}
+
+.breakdown{background:var(--white);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.03);overflow:hidden}
+.breakdown-header{padding:22px 32px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.breakdown-header h2{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--navy)}
+.data-note{font-family:'Montserrat',sans-serif;font-size:10px;color:var(--fog);font-weight:400;display:flex;align-items:center;gap:12px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px}
+.dot-s{background:var(--moss)}.dot-m{background:var(--bronze)}.dot-w{background:#c0392b}
+
+.breakdown table{width:100%;border-collapse:collapse}
+.breakdown th{text-align:left;padding:12px 32px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--fog);background:var(--powder);border-bottom:1px solid rgba(0,0,0,.05)}
+.breakdown th:nth-child(2),.breakdown th:nth-child(3),.breakdown th:nth-child(4){text-align:right}
+.breakdown td{padding:10px 32px;font-family:'Montserrat',sans-serif;font-size:12px;border-bottom:1px solid rgba(0,0,0,.025);font-weight:400}
+.breakdown td:nth-child(2),.breakdown td:nth-child(3),.breakdown td:nth-child(4){text-align:right;font-variant-numeric:tabular-nums}
+.breakdown tr:hover td{background:rgba(21,44,53,.01)}
+.breakdown tr.cat td{background:var(--navy);color:var(--powder);font-weight:500;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:9px 32px;border-bottom:none}
+.breakdown tr.total td{background:var(--navy);color:var(--powder);font-weight:500;font-size:14px;padding:16px 32px;letter-spacing:1px}
+.bar{display:inline-block;height:3px;border-radius:2px;background:var(--bronze);opacity:.35;margin-left:6px;vertical-align:middle;transition:width .4s}
+
+.footer{background:var(--navy);padding:32px 40px;text-align:center}
+.footer p{font-family:'Montserrat',sans-serif;color:var(--fog);font-size:10px;font-weight:400;letter-spacing:1px}
+.footer a{color:var(--bronze);text-decoration:none}
+.footer .brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--powder);letter-spacing:3px;margin-bottom:12px;opacity:0.7}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){.hero-card{grid-template-columns:1fr 1fr}.summary-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.hero-card{grid-template-columns:1fr}.summary-cards{grid-template-columns:1fr}.header-inner,.hero-inner,.results{padding-left:20px;padding-right:20px}.breakdown td,.breakdown th{padding:8px 14px;font-size:11px}.header-badge{display:none}.hero-title{font-size:24px}}
+</style>
+</head>
+<body>
+
+<div class="header"><div class="header-inner">
+  <div class="logo-area">
+    <img class="logo-img" src="https://images.squarespace-cdn.com/content/v1/672b7ad75e3bcd2494386c52/73d93925-553a-4d09-ac4a-4e6377452349/Vaughn+Logo+RGB_Full+Powder.png?format=500w" alt="Vaughn Construction">
+  </div>
+  <div class="header-badge">Internal Estimating Tool</div>
+</div></div>
+
+<div class="hero"><div class="hero-inner">
+  <p class="hero-title">New Build Cost Estimator</p>
+  <div class="hero-card">
+    <div class="input-group"><label>Conditioned Sq Ft</label><input type="text" id="sqft" placeholder="e.g. 2,500" inputmode="numeric"></div>
+    <div class="input-group"><label>Estimate Tier</label><select id="tier"><option value="q1">Conservative (Q1)</option><option value="med" selected>Mid-Range (Median)</option><option value="q3">High-End (Q3)</option></select></div>
+    <div class="input-group"><label>Markup %</label><select id="markup"><option value="0.10">10%</option><option value="0.15" selected>15%</option><option value="0.20">20%</option><option value="0.25">25%</option><option value="0.30">30%</option></select></div>
+    <div class="input-group"><label>&nbsp;</label><button class="btn-estimate" onclick="generate()">Generate Estimate</button></div>
+  </div>
+</div></div>
+
+<div class="results" id="results">
+  <div class="summary-cards">
+    <div class="summary-card"><div class="label">Build Cost</div><div class="value" id="sCost">—</div><div class="sub">Builder cost before markup</div></div>
+    <div class="summary-card"><div class="label">Cost Per Sq Ft</div><div class="value bronze" id="sPsf">—</div><div class="sub" id="sTier">Median estimate</div></div>
+    <div class="summary-card"><div class="label">Sell Price</div><div class="value moss" id="sSell">—</div><div class="sub" id="sMarkup">Including 15% markup</div></div>
+    <div class="summary-card"><div class="label">Projected Profit</div><div class="value bronze" id="sProfit">—</div><div class="sub" id="sMargin">—</div></div>
+  </div>
+  <div class="range-section"><h2>Estimate Range — All Tiers</h2><div class="range-bar-wrap" id="rangeBar"></div><div class="range-labels"><span id="rLow">—</span><span id="rMed" class="active">—</span><span id="rHigh">—</span></div></div>
+  <div class="breakdown"><div class="breakdown-header"><h2>Line-Item Breakdown</h2><div class="data-note"><span><span class="dot dot-s"></span>5+ builds</span><span><span class="dot dot-m"></span>3–4</span><span><span class="dot dot-w"></span>2</span></div></div>
+  <table><thead><tr><th>Cost Code</th><th>$/SF</th><th>Estimated Cost</th><th>Builds</th></tr></thead><tbody id="tbody"></tbody></table></div>
+</div>
+
+<div class="footer">
+  <p class="brand">Build Well, Live Unbound.</p>
+  <p>Vaughn Construction Co. — Waco, Texas &nbsp;|&nbsp; Internal Use Only &nbsp;|&nbsp; <a href="https://www.vaughnwtx.com" target="_blank">vaughnwtx.com</a></p>
+  <p style="margin-top:6px;opacity:.4">Data: 9 completed custom builds &nbsp;|&nbsp; Cost codes with 2+ builds only &nbsp;|&nbsp; Updated Apr 2026</p>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// VAUGHN CONSTRUCTION CO. — ACTUAL COST DATA
+// Source: BuilderTrend Job Costing Budget (Actuals)
+// 9 Completed Builds: Hammond (3186sf), De La Pena (2074sf),
+//   Ogles JR (1762sf), Ogles SR (1316sf), Heatherly (5189sf),
+//   Martinez (3513sf), Simcik (2535sf), McAfee (2197sf), Arscott (2778sf)
+// Filtered: 2+ projects only (77 cost codes)
+// Format: [code, avg$/sf, q1, median, q3, #projects, category]
+// ═══════════════════════════════════════════════════════════════════
+const D=[
+["0110 Land Clearing",2.1217,1.33,1.52,2.62,3,"Pre-Construction"],
+["0120 Survey",0.5089,0.33,0.51,0.68,2,"Pre-Construction"],
+["0130 Plan Conversion",0.2925,0.12,0.22,0.43,3,"Pre-Construction"],
+["0150 Water Meter",2.0845,0.30,0.92,2.70,4,"Pre-Construction"],
+["0155 Inspections",0.2007,0.15,0.20,0.26,7,"Pre-Construction"],
+["0160 Septic Engineering",0.3122,0.23,0.31,0.40,2,"Pre-Construction"],
+["0165 Septic",4.7694,3.36,4.34,5.23,9,"Pre-Construction"],
+["0180 Permitting",0.5484,0.54,0.55,0.56,2,"Pre-Construction"],
+["0190 Temp Electric Pole / Trenching",4.1656,0.35,2.55,5.50,6,"Pre-Construction"],
+["0210 Portable Restroom",0.4300,0.26,0.44,0.58,9,"Job Site"],
+["0220 Temporary Electric",0.1238,0.13,0.13,0.13,5,"Job Site"],
+["0230 Temporary Water",0.0839,0.07,0.08,0.10,2,"Job Site"],
+["0250 Trash Haul Off & Site Clean Up",0.9936,0.66,1.02,1.44,9,"Job Site"],
+["0260 Builders Risk Insurance",0.6653,0.46,0.49,0.76,7,"Job Site"],
+["0310 Engineering / Foundation Plan",0.6028,0.50,0.61,0.64,7,"Foundation"],
+["0320 Geotech",0.3795,0.33,0.35,0.48,5,"Foundation"],
+["0330 Padwork / Dirt",2.6758,1.91,3.07,3.83,4,"Foundation"],
+["0340 Termite Soil Treatment",0.5518,0.45,0.60,0.70,4,"Foundation"],
+["0350 Foundation Labor",14.5352,4.82,16.62,18.69,9,"Foundation"],
+["0360 Foundation Materials — Steel / Cables",1.8150,1.33,1.50,1.97,7,"Foundation"],
+["0365 Foundation Materials — Concrete",19.7230,9.08,9.64,25.33,3,"Foundation"],
+["0380 Rough Grading — Post Pour",0.9165,0.72,0.91,0.99,5,"Foundation"],
+["0410 Framing Labor",11.6207,10.29,12.45,14.82,9,"Framing"],
+["0415 Framing Materials",20.7095,15.87,21.43,23.81,9,"Framing"],
+["0420 Windows / Glass",3.9094,2.92,3.51,4.39,9,"Framing"],
+["0440 Exterior Doors",2.8112,2.14,2.45,3.49,9,"Framing"],
+["0450 Fireplace Labor",0.2787,0.07,0.19,0.40,4,"Framing"],
+["0455 Fireplace Materials",2.2502,1.86,1.94,1.98,5,"Framing"],
+["0520 Water Heater",0.7712,0.63,0.73,0.88,7,"Plumbing"],
+["0530 Plumbing Labor",6.6954,5.90,6.73,7.38,9,"Plumbing"],
+["0540 Gas",0.6400,0.33,0.47,0.81,6,"Plumbing"],
+["Plumbing Fixtures",1.4219,0.18,1.45,2.28,9,"Plumbing"],
+["0610 Electrical Fixtures & Equipment",1.4412,1.26,1.43,1.58,8,"Electrical"],
+["0620 Electrical Labor",12.1424,9.64,10.92,16.44,9,"Electrical"],
+["0710 HVAC Labor & Materials",5.1787,3.92,5.44,6.27,9,"HVAC"],
+["0810 Roofing Labor",2.0853,1.77,1.93,2.26,8,"Roofing"],
+["0820 Roofing Materials",3.6024,3.57,3.73,3.90,9,"Roofing"],
+["0840 Gutters",1.1643,0.95,1.24,1.40,6,"Roofing"],
+["0910 Masonry Labor",1.8262,1.04,1.42,1.48,5,"Masonry"],
+["0920 Masonry Materials — Veneers / Brick",2.3281,0.78,1.28,3.39,5,"Masonry"],
+["0930 Masonry Materials — Sand",0.3791,0.22,0.38,0.54,2,"Masonry"],
+["0940 Masonry Materials — Mortar",0.2460,0.12,0.17,0.41,5,"Masonry"],
+["0950 Masonry Materials — Lintels & Ties",0.0649,0.04,0.08,0.09,3,"Masonry"],
+["0960 Fireplace Stone",0.5370,0.33,0.54,0.75,2,"Masonry"],
+["1010 Insulation",3.0441,2.76,2.89,3.22,9,"Insulation & Drywall"],
+["1020 Drywall Labor & Materials",4.7616,3.94,4.99,5.85,9,"Insulation & Drywall"],
+["1030 Tape, Bed & Texture",2.0971,1.54,2.18,2.70,3,"Insulation & Drywall"],
+["1110 Cabinets",8.2875,7.60,9.58,10.66,9,"Cabinets & Countertops"],
+["1120 Countertops",3.7323,3.14,3.53,4.44,9,"Cabinets & Countertops"],
+["1130 Cabinet Hardware",0.1369,0.10,0.12,0.16,4,"Cabinets & Countertops"],
+["1210 Finish Carpentry Labor",3.3561,2.71,3.69,3.88,9,"Finish Carpentry"],
+["1220 Interior Doors",1.4613,1.40,1.43,1.69,9,"Finish Carpentry"],
+["1230 Trim Materials",2.2271,1.63,2.07,2.69,9,"Finish Carpentry"],
+["1240 Door Hardware",0.2870,0.05,0.29,0.38,8,"Finish Carpentry"],
+["1250 Mirrors",0.2770,0.17,0.31,0.40,3,"Finish Carpentry"],
+["1260 Bath Hardware",0.1786,0.12,0.24,0.26,3,"Finish Carpentry"],
+["1270 Garage Door",1.4291,1.07,1.28,1.56,6,"Finish Carpentry"],
+["1310 Interior Painting Labor",2.7913,0.19,0.34,5.17,9,"Painting"],
+["1320 Interior Painting Materials",2.4106,1.68,2.24,2.82,9,"Painting"],
+["1330 Exterior Paint Labor",0.4270,0.13,0.42,0.71,6,"Painting"],
+["1340 Exterior Paint Materials",0.9236,0.68,0.74,1.06,6,"Painting"],
+["1430 Flooring Materials",2.3720,0.50,2.97,3.72,9,"Flooring"],
+["1440 Flooring Labor",1.9467,1.91,2.06,2.17,8,"Flooring"],
+["1450 Tile / Schluter Trim",1.3134,0.66,1.18,1.38,7,"Flooring"],
+["1470 Tub & Shower Surrounds",2.6920,1.95,2.47,3.62,9,"Flooring"],
+["1480 Backsplash Labor",0.4159,0.33,0.37,0.41,8,"Flooring"],
+["1550 Appliances",2.9962,1.33,3.78,4.50,7,"Appliances"],
+["Appliance Installation",0.2830,0.21,0.23,0.41,5,"Appliances"],
+["1610 Finish Cleaning",0.4337,0.31,0.37,0.50,9,"Cleaning"],
+["1710 Concrete Flatwork Labor",3.7000,0.96,1.25,2.05,5,"Exterior & Landscaping"],
+["1715 Concrete Flatwork Materials",0.5686,0.01,0.01,0.85,3,"Exterior & Landscaping"],
+["1720 Driveway",4.2953,2.66,3.97,5.38,7,"Exterior & Landscaping"],
+["1740 Finish Grading",1.1013,0.54,1.04,1.37,5,"Exterior & Landscaping"],
+["1750 Irrigation",2.3899,2.21,2.39,2.56,2,"Exterior & Landscaping"],
+["1760 Landscaping Materials",1.6953,1.29,1.47,1.98,3,"Exterior & Landscaping"],
+["1765 Landscaping Labor",1.3300,1.22,1.33,1.44,2,"Exterior & Landscaping"],
+["Buildertrend Flat Rate",2.9004,0.14,0.34,3.43,5,"Other"]
+];
+function fmt(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+function fmt2(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function dt(j){return j>=5?'<span class="dot dot-s"></span>':j>=3?'<span class="dot dot-m"></span>':'<span class="dot dot-w"></span>'}
+function generate(){
+  const sf=parseFloat(document.getElementById('sqft').value.replace(/,/g,''));
+  if(!sf||sf<100){alert('Enter a valid square footage.');return}
+  const tier=document.getElementById('tier').value,mu=parseFloat(document.getElementById('markup').value),tbody=document.getElementById('tbody');
+  tbody.innerHTML='';let total=0,tQ1=0,tMed=0,tQ3=0,mx=0;
+  D.forEach(d=>{const c=(tier==='q1'?d[2]:tier==='med'?d[3]:d[4])*sf;if(c>mx)mx=c});
+  let lastCat='';
+  D.forEach(d=>{
+    const[code,avg,q1,med,q3,proj,cat]=d,psf=tier==='q1'?q1:tier==='med'?med:q3,cost=psf*sf;
+    total+=cost;tQ1+=q1*sf;tMed+=med*sf;tQ3+=q3*sf;
+    if(cat!==lastCat){lastCat=cat;const r=document.createElement('tr');r.className='cat';r.innerHTML='<td colspan="4">'+cat+'</td>';tbody.appendChild(r)}
+    const bw=mx>0?(cost/mx)*70:0,r=document.createElement('tr');
+    r.innerHTML='<td>'+code+'</td><td>'+fmt2(psf)+'</td><td>'+(cost>0?fmt(cost):'—')+'<span class="bar" style="width:'+bw+'px"></span></td><td>'+proj+' '+dt(proj)+'</td>';
+    tbody.appendChild(r);
+  });
+  const tr=document.createElement('tr');tr.className='total';
+  tr.innerHTML='<td>Total Build Cost</td><td>'+fmt2(total/sf)+'/sf</td><td>'+fmt(total)+'</td><td>9 builds</td>';
+  tbody.appendChild(tr);
+  const sell=total*(1+mu),profit=sell-total;
+  document.getElementById('sCost').textContent=fmt(total);
+  document.getElementById('sPsf').textContent=fmt2(total/sf)+'/sf';
+  document.getElementById('sTier').textContent=tier==='q1'?'Conservative (25th percentile)':tier==='med'?'Mid-range (Median)':'High-end (75th percentile)';
+  document.getElementById('sSell').textContent=fmt(sell);
+  document.getElementById('sMarkup').textContent='Including '+Math.round(mu*100)+'% markup';
+  document.getElementById('sProfit').textContent=fmt(profit);
+  document.getElementById('sMargin').textContent=Math.round((profit/sell)*100)+'% margin on sell price';
+  const rb=document.getElementById('rangeBar'),range=tQ3-tQ1||1;
+  rb.innerHTML='<div class="range-fill" style="left:0;width:100%;background:rgba(21,44,53,.08);border-radius:18px"></div><div class="range-fill" style="left:0;width:'+((tMed-tQ1)/range*100)+'%;background:rgba(135,106,75,.3);border-radius:18px"></div><div style="position:absolute;top:-2px;left:'+Math.max(0,Math.min(100,(total-tQ1)/range*100))+'%;width:3px;height:40px;background:var(--navy);border-radius:2px;z-index:5"></div>';
+  document.getElementById('rLow').textContent='Q1: '+fmt(tQ1);
+  document.getElementById('rMed').textContent='Median: '+fmt(tMed);
+  document.getElementById('rHigh').textContent='Q3: '+fmt(tQ3);
+  document.getElementById('results').classList.add('visible');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.getElementById('sqft').addEventListener('input',function(e){let v=e.target.value.replace(/[^0-9]/g,'');if(v)v=parseInt(v).toLocaleString();e.target.value=v});
+document.getElementById('sqft').addEventListener('keypress',function(e){if(e.key==='Enter')generate()});
+</script>
+</body>
+</html>
